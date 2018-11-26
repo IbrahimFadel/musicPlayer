@@ -1,89 +1,74 @@
-#from playsound import playsound
-import pygame
 from tkinter import *
-from mutagen.mp3 import MP3
 import time
 import os
+import pygame
+
 
 root = Tk()
 root.geometry("400x400+900+100")
 root.title("Music Player")
+
 pygame.mixer.init()
+index = 0
 
 
-
-
-directory = str(input("What's the directories name? "))
-folder = os.fsencode(directory)
-
-
-#duration = int(mp3File.info.length)
-songI = 0
-
-paused = False
-
-
-songs = []
-for file in os.listdir(folder):
-	filename = os.fsdecode(file)
-	#print(filename)
-	if filename.endswith(".mp3") == True:
-		songs.append(str(file))
-		currentSong = file
-		amountSongs = len(songs)
-		for i in range(amountSongs):
-			#pygame.mixer.music.queue(songs[i])
-			print(songs[i])
-		#print(songs)
-
-
-
-songFile = currentSong
-mp3File = MP3(songFile)
-audioLength = int(mp3File.info.length)
-
-
-
-pos = pygame.mixer.music.get_pos()
-def start():
-	pygame.mixer.music.load(currentSong)
+def startSongs():
+	print(index)
+	pygame.mixer.music.load('music/' + songs[index])
 	pygame.mixer.music.play()
-	global audioLength
-	while audioLength > 0 and paused != True:
-		audioLength -= 1
-		time.sleep(1)
-		print(audioLength)
-		root.update()
-		#root.update_idletasks()
 
 def pause():
 	pygame.mixer.music.pause()
-	paused = True
-	#updateDurationLabel()
 
 def play():
 	pygame.mixer.music.unpause()
-	paused = False
 
-def restart():
-	pygame.mixer.music.rewind()
+def skip():
+	audioLength = int(songs[index].info.length)
+	print(audioLength)
 
-startButton = Button(root, text="Start Song", command=start)
-startButton.grid(row=1, column=3)
+def onSelect(event):
+	global index
+	w = event.widget
+	index = int(w.curselection()[0])
+	print(index)
+	playButton = Button(root, text='Start Songs', command=startSongs)
+	playButton.place(x=275, y=100)
 
-pauseButton = Button(root, text="Pause", command=pause)
-pauseButton.grid(row=0, column=3)
+	pauseButton = Button(root, text='Pause', command=pause)
+	pauseButton.place(x=275, y=130)
 
-playButton = Button(root, text="Play", command=play)
-playButton.grid(row=2, column=3)
+	playButton = Button(root, text='Play', command=play)
+	playButton.place(x=275, y=160)
 
-restartButton = Button(root, text="Restart Song", command=restart)
-restartButton.grid(row=3, column=3)
+	skipButton = Button(root, text='Skip', command=skip)
+	skipButton.place(x=275, y=190)
+	return(index)
 
-audioLengthLabel = Label(root, textvariable=audioLength)
-audioLengthLabel.grid(row=5, column=3)
 
-#playsound('viceCity.mp3')
-#root.update_idletasks()
+
+directory = os.fsencode('music')
+
+songs = []
+for file in os.listdir(directory):
+    filename = os.fsdecode(file)
+    if filename.endswith(".mp3"): 
+        songs.append(filename)
+        print(filename)
+        continue
+    else:
+        continue
+
+titleLabel = Label(root, text='Bootleg Itunes :)')
+titleLabel.place(x=150, y=30)
+
+songListbox = Listbox(root, height=7)
+songListbox.place(x=35, y=100)
+songListbox.bind('<<ListboxSelect>>', onSelect)
+
+for i in range(len(songs)):
+	songListbox.insert(END, songs[i])	
+
+
 
 mainloop()
