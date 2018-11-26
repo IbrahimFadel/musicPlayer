@@ -2,6 +2,7 @@ from tkinter import *
 import time
 import os
 import pygame
+from mutagen.mp3 import MP3
 
 
 root = Tk()
@@ -24,8 +25,16 @@ def play():
 	pygame.mixer.music.unpause()
 
 def skip():
-	audioLength = int(songs[index].info.length)
+	global index
+	song = MP3('music/' + songs[index])
+	audioLength = int(song.info.length)
 	print(audioLength)
+	pygame.mixer.music.set_pos(audioLength)
+	if index == len(songs) - 1:
+		index = 0
+	else:
+		index += 1
+	startSongs()
 
 def onSelect(event):
 	global index
