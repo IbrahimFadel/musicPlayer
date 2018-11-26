@@ -15,7 +15,7 @@ index = 0
 
 def startSongs():
 	print(index)
-	pygame.mixer.music.load('music/' + songs[index])
+	pygame.mixer.music.load(playlistName + songs[index])
 	pygame.mixer.music.play()
 
 def pause():
@@ -26,7 +26,7 @@ def play():
 
 def skip():
 	global index
-	song = MP3('music/' + songs[index])
+	song = MP3(playlistName + songs[index])
 	audioLength = int(song.info.length)
 	print(audioLength)
 	pygame.mixer.music.set_pos(audioLength)
@@ -55,8 +55,8 @@ def onSelect(event):
 	return(index)
 
 
-
-directory = os.fsencode('music')
+playlistName = input('Enter in the directory name: ')
+directory = os.fsencode(playlistName)
 
 songs = []
 for file in os.listdir(directory):
